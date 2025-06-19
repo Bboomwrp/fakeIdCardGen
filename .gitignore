@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+
+
+/output_fake_ids
+
+thai_id_1st.jpg
