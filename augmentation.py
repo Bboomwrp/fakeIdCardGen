@@ -171,21 +171,28 @@ def color_aug(image, technique):
     print("Color Aug Technique = Contrast")
     contrast = 50
     image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    image[:,:,2] = [[max(pixel - contrast, 0) if pixel < 190 else min(pixel + contrast, 255) for pixel in row] for row in image[:,:,2]]
-    image= cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
+    
+    v = image[:, :, 2].astype(np.int16)  # ป้องกัน overflow
+    v = np.where(v < 190, np.clip(v - contrast, 0, 255), np.clip(v + contrast, 0, 255))
+    image[:, :, 2] = v.astype(np.uint8)  # กลับมาเป็น uint8
+    
+    image = cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
   elif technique == "brightness":
     image = cv2.addWeighted(image, 2, np.zeros(image.shape, image.dtype),0, 2)
 
   return image
 
-img = cv2.imread(os.path.join("output_fake_ids", "thai_id_000.jpg"))
-if img is None:
-    print("❌ ไม่พบไฟล์ภาพ")
-    exit()
-color_techniques = ['blur', 'saturation','contrast', 'brightness']
-techniques = ['rotation', 'shearing', 'scaling', 'translation']
-num = np.random.randint(len(techniques))
-img = data_aug(img,techniques[num])
+# img = cv2.imread(os.path.join("output_fake_ids", "thai_id_000.jpg"))
+# if img is None:
+#     print("❌ ไม่พบไฟล์ภาพ")
+#     exit()
+# color_techniques = ['blur', 'saturation','contrast', 'brightness']
+# techniques = ['rotation', 'shearing', 'scaling', 'translation']
+# num = np.random.randint(len(techniques))
+# img = data_aug(img,techniques[num])
+# img = color_aug(img, color_techniques[2])
+
+
 #cv2_imshow(img)
 #img = color_aug(img, color_techniques[3])
 #cv2_imshow(img)
