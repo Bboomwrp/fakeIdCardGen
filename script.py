@@ -17,7 +17,7 @@ FONT_PATH = "THSarabun.ttf"
 #FONT_PATH = "Sarabun-Bold.ttf"
 FACE_DIR = "faces"  # ใช้ไฟล์ภาพในโฟลเดอร์นี้ หรือดึงจากเว็บ
 OUTPUT_DIR = "output_fake_ids"
-NUM_CARDS = 111  # จำนวนภาพที่จะสร้าง
+NUM_CARDS = 500  # จำนวนภาพที่จะสร้าง
 IMG_SIZE = (640, 413)  # ขนาดบัตร
 
 # ----- INITIAL -----
@@ -26,6 +26,20 @@ fake = Faker('th_TH')
 font_bold = ImageFont.truetype(FONT_PATH, 30)
 font_medium = ImageFont.truetype(FONT_PATH, 24)
 font_small = ImageFont.truetype(FONT_PATH, 20)
+
+existing_files = [
+    f for f in os.listdir(OUTPUT_DIR) 
+    if f.startswith("thai_id_") and f.endswith(".jpg")
+]
+existing_indices = []
+for f in existing_files:
+    try:
+        index = int(f.split("_")[2].split(".")[0])
+        existing_indices.append(index)
+    except:
+        pass
+
+start_index = max(existing_indices) + 1 if existing_indices else 0
 
 # ----- HELPER: Fake 13-digit ID -----
 def generate_id_number():
@@ -149,16 +163,16 @@ def draw_fake_id(index):
     draw.text((461, 332), generate_card_serial_number_full(), font=font_small, fill="black")
 
     # ----- Save -----
-    out_path = os.path.join(OUTPUT_DIR, f"thai_id_{index+396:03}.jpg")
+    out_path = os.path.join(OUTPUT_DIR, f"thai_id_{start_index + index:03}.jpg")
     card.save(out_path)
     print(f"✅ Created: {out_path}")
 
 # ----- Run -----
-for i in range(NUM_CARDS):
-    draw_fake_id(i)
+# for i in range(NUM_CARDS):
+#     draw_fake_id(i)
 
 #draw_fake_id(1)
-
+print(start_index)
 # img = get_random_face_with_background()
 # img.show()
 # print(face.size)
