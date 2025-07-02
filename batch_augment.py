@@ -1,7 +1,7 @@
 import os
 import cv2
 import random
-from augmentation import data_aug, color_aug  # ✅ Import ฟังก์ชันจากอีกไฟล์
+from augmentation import data_aug, color_aug
 
 # ----- CONFIG -----
 INPUT_DIR = "output_fake_ids"

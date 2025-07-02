@@ -17,7 +17,7 @@ FONT_PATH = "THSarabun.ttf"
 #FONT_PATH = "Sarabun-Bold.ttf"
 FACE_DIR = "faces"  # ใช้ไฟล์ภาพในโฟลเดอร์นี้ หรือดึงจากเว็บ
 OUTPUT_DIR = "output_fake_ids"
-NUM_CARDS = 500  # จำนวนภาพที่จะสร้าง
+NUM_CARDS = 98  # จำนวนภาพที่จะสร้าง
 IMG_SIZE = (640, 413)  # ขนาดบัตร
 
 # ----- INITIAL -----
@@ -168,11 +168,11 @@ def draw_fake_id(index):
     print(f"✅ Created: {out_path}")
 
 # ----- Run -----
-# for i in range(NUM_CARDS):
-#     draw_fake_id(i)
+for i in range(NUM_CARDS):
+    draw_fake_id(i)
 
-#draw_fake_id(1)
-print(start_index)
+# draw_fake_id(0)
+# print(start_index)
 # img = get_random_face_with_background()
 # img.show()
 # print(face.size)
