@@ -17,7 +17,7 @@ FONT_PATH = "THSarabun.ttf"
 #FONT_PATH = "Sarabun-Bold.ttf"
 FACE_DIR = "faces"  # ใช้ไฟล์ภาพในโฟลเดอร์นี้ หรือดึงจากเว็บ
 OUTPUT_DIR = "output_fake_ids"
-NUM_CARDS = 98  # จำนวนภาพที่จะสร้าง
+NUM_CARDS = 23  # จำนวนภาพที่จะสร้าง
 IMG_SIZE = (640, 413)  # ขนาดบัตร
 
 # ----- INITIAL -----
@@ -103,11 +103,11 @@ def draw_fake_id(index):
     if gender == 'male':
         prefix_th = "นาย"
         prefix_en = "Mr."
-        full_name_th = fake.name_male()
+        full_name_th = fake.name_male().replace("ด.ช.", "")
     elif gender == 'female':
         prefix_th = random.choice(["นาง", "นางสาว"])
         prefix_en = "Mrs."
-        full_name_th = fake.name_female()    
+        full_name_th = fake.name_female().replace("ด.ญ.", "")    
     name_th = f"{prefix_th} {full_name_th}"
 
     # name_en = fake.first_name().upper()
@@ -117,11 +117,11 @@ def draw_fake_id(index):
         first_th = name_parts[0]
         last_th = name_parts[1]
     else:
-        first_th = name_th
+        first_th = name_parts[0]
         last_th = ""
 
-    name_en = romanize(first_th).capitalize()
-    surname_en = romanize(last_th).capitalize()
+    name_en = romanize(first_th, engine="thai2rom").capitalize()
+    surname_en = romanize(last_th, engine="thai2rom").capitalize()
     name_en = f"{prefix_en} {name_en}"
 
     dob = fake.date_of_birth(minimum_age=18, maximum_age=60)
