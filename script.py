@@ -1,3 +1,4 @@
+import json
 from PIL import Image, ImageDraw, ImageFont
 from faker import Faker
 import os
@@ -16,11 +17,26 @@ TEMPLATE_PATH = "thai_id_template.png"
 FONT_PATH = "THSarabun.ttf"
 #FONT_PATH = "Sarabun-Bold.ttf"
 FACE_DIR = "faces"  # ใช้ไฟล์ภาพในโฟลเดอร์นี้ หรือดึงจากเว็บ
-OUTPUT_DIR = "output_fake_ids"
-NUM_CARDS = 500  # จำนวนภาพที่จะสร้าง
+OUTPUT_DATA = os.path.join("fake_generator", "data")
+OUTPUT_DIR = os.path.join(OUTPUT_DATA, "Images")
+OUTPUT_JSON = os.path.join(OUTPUT_DATA, "Annotations")
+NUM_CARDS = 50  # จำนวนภาพที่จะสร้าง
 IMG_SIZE = (640, 413)  # ขนาดบัตร
 
+ID_NUMBER = []
+NAME_TH = []
+NAME_EN = []
+SURNAME_EN = []
+DOB_TH = []
+DOB_EN = []
+ADDRESS_1 = []
+ADDRESS_2 = []
+SERIAL_NUM = []
+
 # ----- INITIAL -----
+os.makedirs(OUTPUT_DATA, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(OUTPUT_JSON, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 fake = Faker('th_TH')
 font_bold = ImageFont.truetype(FONT_PATH, 30)
@@ -84,11 +100,14 @@ def generate_card_serial_number_full():
     return f"{office_code:04d}-{subcode:02d}-{serial_number:08d}"
 
 def safe_romanize(word):
+    if not word:
+        return ""
     try:
         return romanize(word).capitalize()
-    except Exception as e:
-        print(f"⚠️ Romanize error on '{word}': {e}")
-        return "Unknown"
+    except IndexError:
+        return ""
+    except Exception:
+        return ""
 
 # ----- วาดบัตรประชาชนปลอม -----
 def draw_fake_id(index):
@@ -120,9 +139,13 @@ def draw_fake_id(index):
         first_th = name_th
         last_th = ""
 
-    name_en = romanize(first_th).capitalize()
-    surname_en = romanize(last_th).capitalize()
-    name_en = f"{prefix_en} {name_en}"
+    # name_en = romanize(first_th).capitalize()
+    # surname_en = romanize(last_th).capitalize()
+    # name_en = f"{prefix_en} {name_en}"
+
+    name_en_part = safe_romanize(first_th)
+    surname_en = safe_romanize(last_th)
+    name_en = f"{prefix_en} {name_en_part}"
 
     dob = fake.date_of_birth(minimum_age=18, maximum_age=60)
     dob_str_th = dob.strftime("%d %b")
@@ -160,19 +183,86 @@ def draw_fake_id(index):
     # bg_height.paste(face_img, (0, 0))
     card.paste(face_img, (461, 197))
 
-    draw.text((461, 332), generate_card_serial_number_full(), font=font_small, fill="black")
+    serial_number = generate_card_serial_number_full()
+    draw.text((461, 332), serial_number, font=font_small, fill="black")
+
+    ID_NUMBER.append(id_number)
+    NAME_TH.append(name_th)
+    NAME_EN.append(name_en)
+    SURNAME_EN.append(surname_en)
+    DOB_TH.append(dob_str_th)
+    DOB_EN.append(dob_str_en)
+    ADDRESS_1.append(wrapped[0])
+
+    if len(wrapped) > 1:
+        ADDRESS_2.append(wrapped[1])
+    else:
+        ADDRESS_2.append('')
+
+    SERIAL_NUM.append(serial_number)
 
     # ----- Save -----
-    out_path = os.path.join(OUTPUT_DIR, f"thai_id_{start_index + index:03}.jpg")
+    out_path = os.path.join(OUTPUT_DIR, f"thai_id_{start_index + index:04}.jpg")
     card.save(out_path)
     print(f"✅ Created: {out_path}")
 
+# ----- สร้าง metadata json เพื่อใช้สร้างการปลอม -----
+def generate_card_metadata(id_number, name_th, name_en, surname_en, dob_th, dob_en, address_1, address_2, serial_num):
+    card_data = {
+        "id_number": {
+            "value": id_number, 
+            "quad": [[300, 78], [470, 78], [470, 100], [300, 100]]
+        },
+        "name_th": {
+            "value": name_th,
+            "quad": [[215, 105], [520, 105], [520, 140], [215, 140]]
+        },
+        "name_en": {
+            "value": name_en,
+            "quad": [[265, 142], [415, 142], [415, 163], [265, 163]]
+        },
+        "surname_en": {
+            "value": surname_en,
+            "quad": [[294, 163], [460, 163], [460, 186], [294, 186]]
+        },
+        "dob_th": {
+            "value": dob_th,
+            "quad": [[285, 187], [390, 187], [390, 207], [285, 207]]
+        },
+        "dob_en": {
+            "value": dob_en,
+            "quad": [[322, 211], [430, 211], [430, 233], [322, 233]]
+        },
+        "address_1": {
+            "value": address_1,
+            "quad": [[145, 255], [425, 255], [425, 285], [145, 285]]
+        },
+        "address_2": {
+            "value": address_2,
+            "quad": [[112, 279], [375, 279], [375, 307], [112, 307]]
+        },
+        "serial_number": {
+            "value": serial_num,
+            "quad": [[461, 337], [585, 337], [585, 350], [461, 350]]
+        }
+    }
+    return card_data
+
 # ----- Run -----
-# for i in range(NUM_CARDS):
-#     draw_fake_id(i)
+for i in range(NUM_CARDS):
+    draw_fake_id(i)
+    card_metadata = generate_card_metadata(ID_NUMBER[i], NAME_TH[i], NAME_EN[i], SURNAME_EN[i], DOB_TH[i], DOB_EN[i], ADDRESS_1[i], ADDRESS_2[i], SERIAL_NUM[i])
+    
+    json_filename = f"card_{i+1:04}.json" 
+    json_filepath = os.path.join(OUTPUT_JSON, json_filename)
+
+    with open(json_filepath, 'w', encoding='utf-8') as f:
+        json.dump(card_metadata, f, ensure_ascii=False, indent=4)
+
+    print(f"✅ Generated metadata json: {json_filename}")
 
 #draw_fake_id(1)
-print(start_index)
+# print(start_index)
 # img = get_random_face_with_background()
 # img.show()
 # print(face.size)

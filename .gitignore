@@ -10,3 +10,9 @@ thai_id_1st.jpg
 /augmented_fake_ids
 
 /visual_augmented
+
+/faces
+
+/fake_id_dataset
+
+/fake_generator/data
