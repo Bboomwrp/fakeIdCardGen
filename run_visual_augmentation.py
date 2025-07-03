@@ -24,24 +24,24 @@ def save_visual_aug(input_dir, output_dir, Type):
     else:
     
         # ตรวจสอบ index ล่าสุดใน OUTPUT_FOLDER
-        existing_aug_files = [f for f in os.listdir(output_dir) if f.startswith("aug_") and f.endswith(".jpg")]
+        existing_aug_files = [f for f in os.listdir(output_dir) if f.startswith("visual_aug_") and f.endswith(".jpg")]
         existing_indices = []
 
         for f in existing_aug_files:
             try:
-                num = int(f.split("_")[1].split(".")[0])
+                num = int(f.split("_")[2].split(".")[0])
                 existing_indices.append(num)
             except:
-                pass
+                continue
 
         start_index = max(existing_indices) + 1 if existing_indices else 1
+        # print(start_index)
 
-        selected_files = random.sample(image_files, min(NUM_IMAGES, len(image_files)))
-
-        for i, filename in enumerate(selected_files):
+        for i in range(NUM_IMAGES):
+            filename = random.choice(image_files)  # ✅ ใช้รูปซ้ำได้
             input_path = os.path.join(input_dir, filename)
             output_index = start_index + i
-            output_filename = f"aug_{output_index:04d}_{Type}.jpg"
+            output_filename = f"visual_aug_{output_index:04d}_{Type}.jpg"
             output_path = os.path.join(output_dir, output_filename)
 
             original = Image.open(input_path).convert("RGB")

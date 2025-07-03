@@ -103,9 +103,7 @@ def safe_romanize(word):
     if not word:
         return ""
     try:
-        return romanize(word).capitalize()
-    except IndexError:
-        return ""
+        return romanize(word, engine="thai2rom").capitalize()
     except Exception:
         return ""
 
@@ -122,11 +120,11 @@ def draw_fake_id(index):
     if gender == 'male':
         prefix_th = "นาย"
         prefix_en = "Mr."
-        full_name_th = fake.name_male()
+        full_name_th = fake.name_male().replace("ด.ช.", "")
     elif gender == 'female':
         prefix_th = random.choice(["นาง", "นางสาว"])
         prefix_en = "Mrs."
-        full_name_th = fake.name_female()    
+        full_name_th = fake.name_female().replace("ด.ญ.", "")    
     name_th = f"{prefix_th} {full_name_th}"
 
     # name_en = fake.first_name().upper()
@@ -136,7 +134,7 @@ def draw_fake_id(index):
         first_th = name_parts[0]
         last_th = name_parts[1]
     else:
-        first_th = name_th
+        first_th = name_parts[0]
         last_th = ""
 
     # name_en = romanize(first_th).capitalize()
