@@ -28,7 +28,7 @@
 fake_generator/data/generated_dataset
 ซึ่งประกอบด้วยทั้งภาพและ .json ของข้อมูลปลอมที่สร้างขึ้น
 
-## ✅ 3. รัน run_visual_augmentation.py และ batch_augment.py (อยู่ในโฟลเดอร์ `augmentation`)
+## ✅ 3. รัน run_visual_augmentation.py และ batch_augment.py (อยู่ใน `augmentation/visual_augmentation และ augmentation/augmentation ตามลำดับ`)
 
 📁 Output สุดท้ายจะถูกเก็บไว้ใน:
 fake_id_dataset
