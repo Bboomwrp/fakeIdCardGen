@@ -17,7 +17,10 @@ TEMPLATE_PATH = "thai_id_template.png"
 FONT_PATH = "THSarabun.ttf"
 #FONT_PATH = "Sarabun-Bold.ttf"
 FACE_DIR = "faces"  # ใช้ไฟล์ภาพในโฟลเดอร์นี้ หรือดึงจากเว็บ
-OUTPUT_DATA = os.path.join("fake_generator", "data")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DATA = os.path.join(BASE_DIR, "..", "fake_generator", "data")
+OUTPUT_DATA = os.path.abspath(OUTPUT_DATA) 
+
 OUTPUT_DIR = os.path.join(OUTPUT_DATA, "Images")
 OUTPUT_JSON = os.path.join(OUTPUT_DATA, "Annotations")
 NUM_CARDS = 50  # จำนวนภาพที่จะสร้าง
@@ -37,7 +40,7 @@ SERIAL_NUM = []
 os.makedirs(OUTPUT_DATA, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(OUTPUT_JSON, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+
 fake = Faker('th_TH')
 font_bold = ImageFont.truetype(FONT_PATH, 30)
 font_medium = ImageFont.truetype(FONT_PATH, 24)

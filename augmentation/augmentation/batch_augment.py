@@ -4,10 +4,16 @@ import random
 from augmentation import data_aug, color_aug
 
 # ----- CONFIG -----
-REAL_INPUT_DIR = "fake_generator/data/Images"
-FAKE_INPUT_DIR = "fake_generator/data/generated_dataset/image"
-REAL_OUTPUT_DIR = "fake_id_dataset/real"
-FAKE_OUTPUT_DIR = "fake_id_dataset/fake"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))     
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", "..")) 
+FAKE_GEN_DIR = os.path.join(PROJECT_ROOT, "fake_generator")  
+
+REAL_INPUT_DIR = os.path.join(FAKE_GEN_DIR, "data", "Images")
+FAKE_INPUT_DIR = os.path.join(FAKE_GEN_DIR, "data", "generated_dataset", "image")
+
+REAL_OUTPUT_DIR = os.path.join(PROJECT_ROOT, "fake_id_dataset", "real")
+FAKE_OUTPUT_DIR = os.path.join(PROJECT_ROOT, "fake_id_dataset", "fake")
+
 os.makedirs(REAL_OUTPUT_DIR, exist_ok=True)
 os.makedirs(FAKE_OUTPUT_DIR, exist_ok=True)
 NUMBER = 50
