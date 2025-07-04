@@ -203,7 +203,7 @@ def draw_fake_id(index):
     SERIAL_NUM.append(serial_number)
 
     # ----- Save -----
-    out_path = os.path.join(OUTPUT_DIR, f"thai_id_{start_index + index:04}.jpg")
+    out_path = os.path.join(OUTPUT_DIR, f"thai_id_{start_index + 1 + index:04}.jpg")
     card.save(out_path)
     print(f"✅ Created: {out_path}")
 

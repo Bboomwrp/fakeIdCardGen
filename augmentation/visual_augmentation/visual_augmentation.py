@@ -34,27 +34,39 @@ if __name__ == "__main__":
     import random
     from glob import glob
 
-    folder_path = "output_fake_ids"
-    image_paths = glob(os.path.join(folder_path, "*.jpg"))
+    base_dir = os.path.dirname(os.path.abspath(__file__))     
+    project_root = os.path.abspath(os.path.join(base_dir, "..", "..")) 
+    fake_gen_dir = os.path.join(project_root, "fake_generator")  
 
-    if len(image_paths) == 0:
-        print(f"❌ ไม่พบไฟล์ใน {folder_path}")
-    else:
-        sample_paths = random.sample(image_paths, min(5, len(image_paths)))
+    real_dir = os.path.join(fake_gen_dir, "data", "Images")
+    fake_dir = os.path.join(fake_gen_dir, "data", "generated_dataset", "image")
+
+    real_image_paths = glob(os.path.join(real_dir, "*.jpg"))
+    fake_image_paths = glob(os.path.join(fake_dir, "*.jpg"))
+
+    def show_augmentation(img_path, img_dir, Type):
+        if len(img_path) == 0:
+            print(f"❌ ไม่พบไฟล์ใน {img_dir}")
+        else:
+            sample_paths = random.sample(img_path, min(3, len(img_path)))
         
-        for idx, img_path in enumerate(sample_paths):
-            original = Image.open(img_path).convert("RGB")
-            augmented = apply_visual_augmentation(original)
+            for idx, img_path in enumerate(sample_paths):
+                original = Image.open(img_path).convert("RGB")
+                augmented = apply_visual_augmentation(original)
 
-            # Show both images side by side
-            fig, axes = plt.subplots(1, 2, figsize=(10, 5))
-            axes[0].imshow(original)
-            axes[0].set_title(f"Original ({os.path.basename(img_path)})")
-            axes[0].axis("off")
+                # Show both images side by side
+                fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+                axes[0].imshow(original)
+                axes[0].set_title(f"Original ({os.path.basename(img_path)})")
+                axes[0].axis("off")
 
-            axes[1].imshow(augmented)
-            axes[1].set_title("Augmented")
-            axes[1].axis("off")
+                axes[1].imshow(augmented)
+                axes[1].set_title("Augmented")
+                axes[1].axis("off")
 
-            plt.tight_layout()
-            plt.show()
+                plt.suptitle(f"{Type} card", fontsize=20)
+                plt.tight_layout()
+                plt.show()
+
+show_augmentation(real_image_paths, real_dir, 'real')
+show_augmentation(fake_image_paths, fake_dir, 'fake')
